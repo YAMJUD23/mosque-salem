@@ -13,7 +13,7 @@ import {
 import mosqueeLogo from '../assets/images/mosquee-salem-logo.png';
 import { downloadPedagogicalPdf } from '../utils/generatePedagogicalPdf';
 
-export type PedagogicalCategory = 'priere' | 'islam' | 'arabe' | 'alphabet';
+export type PedagogicalCategory = 'priere' | 'islam' | 'examen' | 'arabe' | 'arabe-ados' | 'alphabet';
 
 export interface PedagogicalSection {
   themeNumber: number;
@@ -432,23 +432,50 @@ export const PEDAGOGICAL_DOCUMENTS: PedagogicalDocument[] = [
   },
 
   // =========================================================================
-  // 3. CATÉGORIE PRIÈRE : CONSULTATION EN LIGNE (SANS PDF)
+  // 3. CATÉGORIE PRIÈRE : CONSULTATION EN LIGNE + FICHE RÉSUMÉ 1 PAGE (PDF)
   // =========================================================================
   {
     id: 'cours-religion-priere-ablutions',
     folder: 'priere',
     categoryLabel: 'Prière',
-    title: "J'apprends la Prière et les Ablutions",
-    subtitle: "Cours complet en 7 thèmes (Consultation en ligne)",
-    badge: 'Catégorie : Prière',
-    pagesCount: 43,
-    description: "Cours complet sur la prière et les ablutions : sens de la prière, rituel du Woudou, règles de la Awra, déroulement geste par geste et invocations.",
-    pdfFileName: '',
-    pdfPath: '',
+    title: "J'apprends la Prière et les Ablutions (+ Résumé Pratique 1 Page PDF)",
+    subtitle: "Cours complet en 8 thèmes + Fiche Résumé Pratique sur 1 Page (Resume_Pratique_Priere_1_Page.pdf)",
+    badge: 'Catégorie : Prière · Résumé PDF 1 Page',
+    pagesCount: 1,
+    description: "Consultez le cours complet en ligne (7 thèmes détaillés) et téléchargez la Fiche Résumé Pratique de la Prière sur 1 seule page A4 regroupant uniquement les étapes et les phrases importantes en arabe, phonétique et français.",
+    pdfFileName: 'Resume_Pratique_Priere_1_Page.pdf',
+    pdfPath: 'assets/aistudio/Resume_Pratique_Priere_1_Page_Mosquee_SALEM.pdf',
     sections: [
       {
         themeNumber: 1,
-        title: "1. Qu'est-ce que la Prière & Récit du Voyage Nocturne",
+        title: "1. Fiche Résumé Pratique sur 1 Page — Les Phrases Importantes de la Prière",
+        subtitle: "Synthèse prête à imprimer sur 1 page A4 pour pratiquer la prière étape par étape",
+        arabicTitle: "ملخص صفة الصلاة والأذكار الأساسية في صفحة واحدة",
+        intro: "Ce résumé tient sur 1 seule page PDF (téléchargeable via le bouton « Télécharger PDF » en haut à droite) et regroupe l'essentiel pour prier immédiatement avec les phrases importantes :",
+        content: [
+          "• Avant de commencer (Conditions) : 1. Avoir les ablutions (Woudou) · 2. Couvrir sa 'Awra · 3. Se tourner vers la Qibla · 4. Formuler l'intention dans le cœur.",
+          "• Sourate Al-Fâtiha (obligatoire à chaque Rak'a) : Bismi Llâhi r-Rahmâni r-Rahîm · Al-hamdu lillâhi Rabbi l-'âlamîn · Ar-Rahmâni r-Rahîm · Mâliki yawmi d-dîn · Iyyâka na'budu wa iyyâka nasta'în · Ihdinâ s-sirâta l-mustaqîm · Sirâta lladhîna an'amta 'alayhim ghayri l-maghdûbi 'alayhim wa la d-dâllîn (Âmîn).",
+          "• At-Tahiyyât (Tashahhud) : « At-tahiyyâtu lillâhi wa s-salawâtu wa t-tayyibât. As-salâmu 'alayka ayyuhâ n-nabiyyu wa rahmatu Llâhi wa barakâtuh. As-salâmu 'alayna wa 'alâ 'ibâdi Llâhi s-sâlihîn. Ash-hadu an lâ ilâha illâ Llâh, wa ash-hadu anna Muhammadan 'abduhu wa rasûluh. »",
+          "• Salât Ibrâhîmiyya (dernier Tashahhud) : « Allâhumma salli 'alâ Muhammad wa 'alâ âli Muhammad kamâ sallayta 'alâ Ibrâhîm... »"
+        ],
+        table: {
+          headers: ['Étape de la Prière', 'Geste & Position', 'Phrase importante à dire (Phonétique)', 'En Arabe', 'Sens en Français'],
+          rows: [
+            ['1. Takbîrat al-Ihrâm', 'Debout face à la Qibla, lever les mains aux épaules', 'Allâhu Akbar', 'اللَّهُ أَكْبَر', 'Allah est le plus Grand'],
+            ['2. Qiyâm (Debout)', 'Main droite sur la gauche sur la poitrine', 'Sourate Al-Fâtiha + 1 courte sourate', 'سُورَةُ الْفَاتِحَة', 'Ouverture du Livre'],
+            ['3. Rukû‘ (Inclinaison)', 'Dire Allâhu Akbar, dos droit, mains sur les genoux', 'Subhâna Rabbiya l-‘Adhîm (× 3)', 'سُبْحَانَ رَبِّيَ الْعَظِيمِ', 'Gloire à mon Seigneur le Très Grand'],
+            ['4. I‘tidâl (Se relever)', 'En se relevant puis une fois bien droit', 'Sami‘a Llâhu liman hamidah / Rabbanâ wa laka l-hamd', 'سَمِعَ اللَّهُ لِمَنْ حَمِدَهُ / رَبَّنَا وَلَكَ الْحَمْدُ', 'Allah entend celui qui Le loue / À Toi la louange'],
+            ['5. 1er Sujûd (Prosternation)', 'Dire Allâhu Akbar, poser 7 membres au sol', 'Subhâna Rabbiya l-A‘lâ (× 3)', 'سُبْحَانَ رَبِّيَ الأَعْلَى', 'Gloire à mon Seigneur le Très Haut'],
+            ['6. Jalsa (Assise)', 'Dire Allâhu Akbar, s’asseoir entre les 2 prosternations', 'Rabbi ghfir lî, Rabbi ghfir lî', 'رَبِّ اغْفِرْ لِي', 'Seigneur, pardonne-moi'],
+            ['7. 2ème Sujûd', 'Dire Allâhu Akbar, 2ème prosternation (fin de la Rak‘a)', 'Subhâna Rabbiya l-A‘lâ (× 3)', 'سُبْحَانَ رَبِّيَ الأَعْلَى', 'Gloire à mon Seigneur le Très Haut'],
+            ['8. Taslîm (Salut final)', 'Tourner la tête à droite puis à gauche', 'As-salâmu ‘alaykum wa rahmatu Llâh (× 2)', 'السَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللَّهِ', 'Que la paix et la miséricorde d’Allah soient sur vous']
+          ]
+        },
+        callout: "Après le salut final : Dire « Astaghfirullâh » (×3), « Allâhumma anta s-salâm wa minka s-salâm, tabârakta yâ dha l-jalâli wa l-ikrâm », puis 33× Subhân Allâh, 33× Al-hamdu lillâh, 33× Allâhu Akbar."
+      },
+      {
+        themeNumber: 2,
+        title: "2. Qu'est-ce que la Prière & Récit du Voyage Nocturne",
         subtitle: "Al-Isra wal-Mi'raj et la prescription divine des 5 prières",
         arabicTitle: "فضل الصلاة وقصة فرضها في الإسراء والمعراج",
         content: [
@@ -460,8 +487,8 @@ export const PEDAGOGICAL_DOCUMENTS: PedagogicalDocument[] = [
         callout: "Le Prophète ﷺ a dit : « Le moment où le serviteur est le plus proche de son Seigneur est lorsqu'il est en prosternation (Soujoud). Multipliez-y donc les invocations. » (Rapporté par Mouslim)."
       },
       {
-        themeNumber: 2,
-        title: "2. Se Préparer à la Prière : Awra, Propreté & Qibla",
+        themeNumber: 3,
+        title: "3. Se Préparer à la Prière : Awra, Propreté & Qibla",
         subtitle: "Les conditions préalables indispensables pour garçons et filles",
         arabicTitle: "شروط صحة الصلاة وستر العورة واستقبال القبلة",
         content: [
@@ -474,8 +501,8 @@ export const PEDAGOGICAL_DOCUMENTS: PedagogicalDocument[] = [
         ]
       },
       {
-        themeNumber: 3,
-        title: "3. Le Rituel des Ablutions (Woudou) & Invocations",
+        themeNumber: 4,
+        title: "4. Le Rituel des Ablutions (Woudou) & Invocations",
         subtitle: "Les 8 étapes purificatrices et les causes d'annulation",
         arabicTitle: "صفة الوضوء ونواقضه",
         content: [
@@ -493,8 +520,8 @@ export const PEDAGOGICAL_DOCUMENTS: PedagogicalDocument[] = [
         callout: "Invocation après le Woudou : « Ash-hadu an lâ ilâha illâ-Llâh wahdahu lâ sharîka lah, wa ash-hadu anna Muhammadan ʿabduhu wa rasûluh. Allâhumma jʿalnî mina t-tawwâbîna wa jʿalnî mina l-mutatahhirîn. » (Les 8 portes du Paradis s'ouvrent à celui qui la prononce)."
       },
       {
-        themeNumber: 4,
-        title: "4. Les 5 Prières Quotidiennes, Rakats & Prières Rawatib",
+        themeNumber: 5,
+        title: "5. Les 5 Prières Quotidiennes, Rakats & Prières Rawatib",
         subtitle: "Horaires, unités obligatoires (Fard) et surérogatoires (Sunna)",
         arabicTitle: "الصلوات الخمس والسنن الرواتب",
         table: {
@@ -512,8 +539,8 @@ export const PEDAGOGICAL_DOCUMENTS: PedagogicalDocument[] = [
         ]
       },
       {
-        themeNumber: 5,
-        title: "5. Déroulement de la Prière Geste par Geste",
+        themeNumber: 6,
+        title: "6. Déroulement de la Prière Geste par Geste",
         subtitle: "Takbir, Qiyam, Ruku, Soujoud, Jalsa, Tashahoud et Taslim",
         arabicTitle: "صفة الصلاة خطوة بخطوة",
         content: [
@@ -528,8 +555,8 @@ export const PEDAGOGICAL_DOCUMENTS: PedagogicalDocument[] = [
         ]
       },
       {
-        themeNumber: 6,
-        title: "6. Les Erreurs Fréquentes à Éviter durant la Prière",
+        themeNumber: 7,
+        title: "7. Les Erreurs Fréquentes à Éviter durant la Prière",
         subtitle: "Préserver la concentration et la validité de son office",
         arabicTitle: "أخطاء شائعة يجب تجنبها في الصلاة",
         content: [
@@ -541,8 +568,8 @@ export const PEDAGOGICAL_DOCUMENTS: PedagogicalDocument[] = [
         ]
       },
       {
-        themeNumber: 7,
-        title: "7. Invocations Post-Prière, Joumou'a, Aïd & Janaza",
+        themeNumber: 8,
+        title: "8. Invocations Post-Prière, Joumou'a, Aïd & Janaza",
         subtitle: "L'assemblée du vendredi et les offices particuliers",
         arabicTitle: "الأذكار بعد الصلاة وصلاة الجمعة والعيدين والجنازة",
         content: [
@@ -668,7 +695,7 @@ export const PEDAGOGICAL_DOCUMENTS: PedagogicalDocument[] = [
           "• Israfil (إسرافيل) : Chargé de souffler dans la Trompe au Jour Dernier.",
           "• L'ange de la mort (ملك الموت) : Chargé de recueillir les âmes sur ordre divin.",
           "Les Livres célestes :",
-          "• La Torah (التوراة) révélée à Moïse (Musa).",
+          "• La Torah (التوراة) révélé à Moïse (Musa).",
           "• Les Psaumes / Zabour (الزبور) révélés à David (Dawud).",
           "• L’Évangile / Injeel (الإنجيل) révélé à Jésus (Isa).",
           "• Le Coran (القرآن) révélé à Muhammad ﷺ, dernière révélation comprenant 114 sourates, descendue progressivement sur environ 23 ans."
@@ -857,6 +884,153 @@ export const PEDAGOGICAL_DOCUMENTS: PedagogicalDocument[] = [
         ]
       }
     ]
+  },
+
+  // =========================================================================
+  // 5. QUESTIONNAIRE : LES GRANDES LIGNES DE L'ISLAM — BASÉ SUR LE RÉSUMÉ ISLAM
+  // =========================================================================
+  {
+    id: 'examen-islam-ados',
+    folder: 'examen',
+    categoryLabel: 'Questionnaire Islam',
+    title: "Questionnaire — Les Grandes Lignes de l'Islam",
+    subtitle: "Fichier PDF : Questionnaire_Grandes_Lignes_Islam.pdf (2 pages · 9 questions · Note / 20)",
+    badge: 'Questionnaire · / 20',
+    pagesCount: 2,
+    description: "Questionnaire de révision sur 20 points portant sur le document « Résumé Islam (Français - Arabe) » : 5 piliers de l'Islam (avec SIYAM en 4ème position), 6 piliers de la Foi, Sunna, 25 prophètes, Livres révélés, 5 prières & Rak'at, invocations, vie du Prophète ﷺ, Zakat & Sadaqa.",
+    pdfFileName: 'Questionnaire_Grandes_Lignes_Islam.pdf',
+    pdfPath: 'assets/aistudio/Examen_Islam_Ados_Mosquee_SALEM.pdf',
+    sections: [
+      {
+        themeNumber: 1,
+        title: "Page 1 — Questions 1 à 4 (Piliers de l'Islam, Piliers de la Foi, Sunna & Prophètes)",
+        subtitle: "Barème de la Page 1 : 11 points sur 20",
+        arabicTitle: "الصفحة الأولى : أركان الإسلام والإيمان والسنة والأنبياء",
+        intro: "Cadre élève : Nom & Prénom, Date et Note / 20.",
+        content: [
+          "Question 1 — Les cinq piliers de l'Islam (4 points) : Complète les 5 piliers de l'Islam (le 4ème pilier « 4. SIYAM — Le jeûne du mois de Ramadan (صوم رمضان) » est déjà rempli exprès ; l'élève complète les lignes 1, 2, 3 et 5).",
+          "Question 2 — Les six piliers de la Foi / Al-Iman (2,5 points) : Complète les 6 piliers de la Foi (le 3ème pilier « 3. CROIRE AUX LIVRES RÉVÉLÉS (الإيمان بالكتب) » est déjà rempli exprès ; l'élève complète les lignes 1, 2, 4, 5 et 6).",
+          "Question 3 — Définition du mot « Sunna » (1,5 point) : D'après la partie 1 du cours (« Mots essentiels »), que désigne le mot Sunna (السنة) en Islam ?",
+          "Question 4 — Les Prophètes mentionnés dans le Coran (3 points) : a) Combien de prophètes sont mentionnés dans le Coran ? b) Qui est le premier être humain et le premier prophète selon l'Islam ? c) Qui est le dernier prophète envoyé par Allah ?"
+        ],
+        table: {
+          headers: ['Question', 'Thème évalué', 'Détail de la consigne', 'Barème'],
+          rows: [
+            ['Question 1', 'Les 5 piliers de l’Islam', '1. [Vide] · 2. [Vide] · 3. [Vide] · 4. SIYAM (Jeûne du Ramadan) · 5. [Vide]', '4 pts'],
+            ['Question 2', 'Les 6 piliers de la Foi', '1. [Vide] · 2. [Vide] · 3. Croire aux Livres révélés · 4. [Vide] · 5. [Vide] · 6. [Vide]', '2,5 pts'],
+            ['Question 3', 'Définition de la Sunna (Q3.2)', 'Expliquer ce que désigne le mot « Sunna » (paroles, actes et approbations du Prophète ﷺ)', '1,5 pt'],
+            ['Question 4', 'Les Prophètes dans le Coran', 'Nombre de prophètes (25), 1er prophète (Adam), dernier prophète (Muhammad ﷺ)', '3 pts']
+          ]
+        }
+      },
+      {
+        themeNumber: 2,
+        title: "Page 2 — Questions 5 à 9 (Livres révélés, 5 Prières, Invocations, Vie du Prophète ﷺ, Zakat & Sadaqa)",
+        subtitle: "Barème de la Page 2 : 9 points sur 20",
+        arabicTitle: "الصفحة الثانية : الكتب السماوية والصلوات والأذكار والسيرة والزكاة",
+        content: [
+          "Question 5 — Les Livres révélés et leurs Prophètes (2 points) : Relier par une flèche chaque Livre révélé (1. La Torah, 2. Les Psaumes / Zabour, 3. L'Évangile / Injeel, 4. Le Coran) au Prophète correspondant (Jésus / 'Issa, Moïse / Moussa, Muhammad ﷺ, David / Dawoud).",
+          "Question 6 — Les 5 prières obligatoires et le nombre de Rak'at (2,5 points) : Compléter le tableau indiquant le nombre de Rak'at obligatoires pour Fajr, Dhuhr, Asr, Maghrib et Isha.",
+          "Question 7 — Les invocations et rappels du quotidien (2 points) : Indiquer le sens en français (ou quand le musulman la prononce) de : 1. Bismillâh, 2. Al-hamdu lillâh, 3. Astaghfirullâh, 4. Incha Allah.",
+          "Question 8 — La vie du Prophète Muhammad ﷺ (1,5 point) : a) Ville de naissance (vers 570), b) Ange ayant transmis la révélation (vers 610), c) Ville d'émigration lors de l'Hégire (en 622).",
+          "Question 9 — La Zakat et la Sadaqa (1 point) : a) Différence entre la Zakat et la Sadaqa, b) Taux habituel de la Zakat sur l'épargne / les biens monétaires (en %)."
+        ],
+        table: {
+          headers: ['Question', 'Thème évalué', 'Détail de la consigne', 'Barème'],
+          rows: [
+            ['Question 5', 'Livres révélés & Prophètes (Q5A)', 'Relier Torah, Psaumes (Zabour), Évangile (Injeel) et Coran à leur Prophète', '2 pts'],
+            ['Question 6', 'Les 5 prières & Rak‘at', 'Nombre de Rak‘at obligatoires : Fajr, Dhuhr, Asr, Maghrib, Isha', '2,5 pts'],
+            ['Question 7', 'Invocations du quotidien (Q8)', 'Sens de Bismillâh, Al-hamdu lillâh, Astaghfirullâh, Incha Allah', '2 pts'],
+            ['Question 8', 'Vie du Prophète ﷺ (Q9)', 'Naissance à La Mecque, ange Jibril, Hégire vers Médine', '1,5 pt'],
+            ['Question 9', 'Zakat & Sadaqa (Q12)', 'Obligation vs don volontaire + taux usuel de 2,5 %', '1 pt']
+          ]
+        },
+        callout: "Total du questionnaire : 20 / 20 · Téléchargez le fichier PDF prêt à imprimer via le bouton « Télécharger PDF »."
+      }
+    ]
+  },
+
+  // =========================================================================
+  // 6. COURS & MÉTHODOLOGIE D'ARABE NIVEAU A1 COMPLET (6 PAGES · 16 PARTIES)
+  // =========================================================================
+  {
+    id: 'cours-arabe-ados-complet',
+    folder: 'arabe-ados',
+    categoryLabel: 'Cours Arabe A1 Complet',
+    title: "Cours & Méthodologie d'Arabe — Niveau A1 Complet",
+    subtitle: "Manuel méthodologique : Cours_Arabe_A1_Complet.pdf (6 pages · 16 parties)",
+    badge: 'Méthodologie & Cours A1 (6 pages · 16 parties)',
+    pagesCount: 6,
+    description: "Manuel méthodologique complet (6 pages · 16 parties numérotées) conçu pour des adolescents francophones (13–17 ans) afin de comprendre la mécanique de l'arabe sans apprendre par cœur : voyelles courtes vs longues (et impact sur le sens), découpage syllabique, article Al- (lunaires/solaires) & règle de l'arrêt (Waqf), secret des 3 lettres racines, verbe « Être » sous-entendu & féminin, pronoms & démonstratifs, suffixes « 3-en-1 » (mon/ton + J'ai + me/te), mots interrogatifs, moteur de conjugaison des verbes (Présent, Passé, Futur, Négation), 20 verbes indispensables, prépositions/connecteurs, méthode des « 4 Briques » pour construire ses phrases, atelier corrigé et socle de vocabulaire.",
+    pdfFileName: 'Cours_Arabe_A1_Complet.pdf',
+    pdfPath: 'assets/aistudio/Cours_Arabe_A1_Complet_Ados_Mosquee_SALEM.pdf',
+    sections: [
+      {
+        themeNumber: 1,
+        title: "Page 1 (Parties 1 à 3) — Voyelles Courtes vs Longues, Impact sur le Sens & Découpage Syllabique",
+        subtitle: "Partie 1 : Tous les signes de lecture · Partie 2 : Courtes (1 temps) vs Longues (2 temps) · Partie 3 : Méthode de découpage en syllabes",
+        arabicTitle: "الحركات القصيرة والطويلة وتقطيع الكلمات إلى مقاطع صوتية",
+        content: [
+          "• Partie 1 — Tous les Signes de Lecture : Voyelles courtes (Fatha a, Kasra i, Damma ou), Voyelles longues / Madd (ā, ī, ū sur 2 temps), Sukûn (consonne pure sans voyelle), Shadda (lettre doublée ×2), Tanwîn (-an / -in / -un = un/une) et Tâ’ Marbûta (ة = marque du féminin).",
+          "• Partie 2 — Entraînement Voyelles Courtes (1 temps) vs Longues (2 temps) & Impact sur le Sens : Pourquoi il faut bien allonger en arabe ! Exemples : جَمَل (jamal = chameau) vs جَمَال (jamāl = beauté) · كَتَبَ (kataba = il a écrit) vs كَاتِب (kātib = écrivain) · مَلِك (malik = roi) vs مَالِك (mālik = maître).",
+          "• Partie 3 — Méthode de Découpage en Syllabes : Les 3 règles d'or pour déchiffrer n'importe quel mot inconnu tout seul (ex: مَسْجِدٌ = [mas] + [ji] + [dun] · مَدْرَسَةٌ = [mad] + [ra] + [sa] + [tun] · مُعَلِّمٌ = [mu] + [ʿal] + [li] + [mun])."
+        ]
+      },
+      {
+        themeNumber: 2,
+        title: "Page 2 (Parties 4 à 6) — Liaison « Al- » (Solaires/Lunaires), Secret des 3 Racines & Verbe « Être »",
+        subtitle: "Partie 4 : Article Al- & règle de l'arrêt (Waqf) · Partie 5 : Système des 3 lettres racines · Partie 6 : Phrase nominale (« Être »), Féminin & Adjectifs",
+        arabicTitle: "أل التعريف وسر الجذور الثلاثية والجملة الاسمية والصفات",
+        content: [
+          "• Partie 4 — Règles de Liaison à l'Oral : Pourquoi dit-on « Al-Kitāb » (lettre lunaire) mais « Ash-Shams / As-Salām / Ad-Dars » (lettres solaires où le L fusionne avec Shadda) + Règle de l'arrêt à l'oral (Waqf).",
+          "• Partie 5 — Le Secret des 3 Lettres Racines : Comment 1 racine de 3 consonnes fabrique toute une famille de mots grâce à des moules fixes (K-T-B = écrire/écrivain/bureau/livre · D-R-S = étudier/enseignant/école/cours · ʿ-L-M · S-J-D · L-ʿ-B).",
+          "• Partie 6 — Le Déclic du Verbe « Être », le Féminin (ة) & les Adjectifs / Contraires : En arabe, [Nom défini avec الـ] + [Adjectif indéfini sans الـ] crée automatiquement le verbe « EST » (ex: الْبَيْتُ كَبِيرٌ = La maison [est] grande · الْمَدْرَسَةُ كَبِيرَةٌ = L'école [est] grande · النégation avec لَيْسَ)."
+        ]
+      },
+      {
+        themeNumber: 3,
+        title: "Page 3 (Parties 7 à 9) — Pronoms, Mécanique des Suffixes « 3-en-1 » (Mon/Ton + J'ai) & Questions",
+        subtitle: "Partie 7 : Pronoms & Démonstratifs · Partie 8 : Suffixes attachés « 3-en-1 » · Partie 9 : Mots interrogatifs & réponses types",
+        arabicTitle: "الضمائر المنفصلة والمتصلة وأدوات الاستفهام",
+        content: [
+          "• Partie 7 — Pronoms Personnels (Singulier, Duel, Pluriel) & Démonstratifs : أَنَا، أَنْتَ، أَنْتِ، هُوَ، هِيَ، نَحْنُ، أَنْتُمْ، هُمْ + هَذَا / هَذِهِ / ذَلِكَ / تِلْكَ / هُنَا / هُنَاكَ (Il y a).",
+          "• Partie 8 — La Mécanique des Suffixes « 3-en-1 » (ـِي / ـكَ / ـكِ / ـهُ / ـهَا / ـنَا / ـكُمْ / ـهُمْ) : Une seule liste de terminaisons permet de dire : 1) Mon/Ton/Son sur un nom (كِتَابِي = mon livre), 2) Le verbe AVOIR avec عِنْدَ (عِنْدِي = J'ai, عِنْدَكَ = Tu as), 3) Me/Te/Pour moi sur un verbe ou une préposition (مَعِي = avec moi, سَاعِدْنِي = aide-moi).",
+          "• Partie 9 — Les Mots Interrogatifs : Poser toutes les questions (هَلْ، مَا / مَاذَا، مَنْ، أَيْنَ، مَتَى، كَيْفَ، لِمَاذَا، كَمْ) avec modèles de réponses."
+        ]
+      },
+      {
+        themeNumber: 4,
+        title: "Page 4 (Parties 10 & 11) — Le « Moteur des Verbes » (Présent, Passé, Futur, Négation) & 20 Verbes",
+        subtitle: "Partie 10 : Comment conjuguer soi-même n'importe quel verbe · Partie 11 : Les 20 verbes indispensables pour converser",
+        arabicTitle: "محرك تصريف الأفعال وأهم ٢٠ فعلاً للاستعمال اليومي",
+        content: [
+          "• Partie 10 — Le « Moteur des Verbes » : Règle mécanique pour conjuguer sans apprendre par cœur : PRÉSENT = préfixe devant (أَ / تَـ / يَـ / نَـ) · PASSÉ = terminaison à la fin (-tu / -ta / -ti / -nā) · FUTUR = سَـ (sa-) devant le présent · NÉGATION = لَا (présent) ou مَا (passé).",
+          "• Partie 11 — Les 20 Verbes Indispensables : Vouloir, Pouvoir, Aimer, Aller, Lire, Écrire, Comprendre, Parler, Apprendre, Savoir, Manger, Boire, Prier, Faire, Voir, Entendre, Entrer/Sortir, Ouvrir, Aider, Habiter."
+        ]
+      },
+      {
+        themeNumber: 5,
+        title: "Page 5 (Parties 12 à 14) — Connecteurs, Méthode des « 4 Briques » & Atelier Pratique Corrigé",
+        subtitle: "Partie 12 : Prépositions & Connecteurs · Partie 13 : Tableau des 4 Briques · Partie 14 : Construis toi-même la phrase (avec corrigé)",
+        arabicTitle: "حروف الجر والربط وطريقة اللبنات الأربع وتطبيق عملي",
+        content: [
+          "• Partie 12 — Les Prépositions & Mots de Liaison : فِي، عَلَى، مِنْ، إِلَى، مَعَ، لِـ، وَ، أَوْ، لَكِنْ، لِأَنَّ، قَبْلَ، بَعْدَ، أَمَامَ، خَلْفَ.",
+          "• Partie 13 — La Méthode des « 4 Briques » : Construire soi-même des centaines de phrases à l'oral en combinant [Brique 1 : Déclencheur (Je veux / Je peux / J'aime / Il faut)] + [Brique 2 : Verbe d'action] + [Brique 3 : Quoi / Où] + [Brique 4 : Quand / Avec qui / Pourquoi].",
+          "• Partie 14 — Atelier Pratique de Compréhension : 5 phrases à construire soi-même en expliquant le raisonnement méthodologique étape par étape + corrigé."
+        ]
+      },
+      {
+        themeNumber: 6,
+        title: "Page 6 (Parties 15 & 16) — Socle de Vocabulaire : Famille, École, Objets, Animaux, Chiffres & Temps",
+        subtitle: "Partie 15 : Famille, École & Objets du quotidien · Partie 16 : Animaux, Chiffres (0 à 100), Jours de la semaine & Temps",
+        arabicTitle: "المفردات الأساسية : العائلة والمدرسة والأشياء والحيوانات والأرقام والوقت",
+        content: [
+          "• Partie 15 — La Famille, l'École & les Objets du Quotidien : Père/mon père, mère/ma mère, frère, sœur, ami(e), élève, professeur, mosquée, école, leçon, question, mot + 20 objets essentiels du quotidien.",
+          "• Partie 16 — Les Animaux, les Chiffres (0 à 100), les Jours de la Semaine & les Repères de Temps (aujourd'hui, demain, hier, maintenant, matin, soir, chaque jour)."
+        ],
+        callout: "Téléchargez le manuel méthodologique complet de 6 pages (16 parties numérotées) via le bouton « Télécharger PDF »."
+      }
+    ]
   }
 ];
 
@@ -917,9 +1091,11 @@ export const PedagogicalResourcesModal: React.FC<PedagogicalResourcesModalProps>
   };
 
   const categories: { id: PedagogicalCategory; label: string; docId: string }[] = [
-    { id: 'priere', label: '1. Prière', docId: 'cours-religion-priere-ablutions' },
+    { id: 'priere', label: '1. Prière (+ Résumé 1p)', docId: 'cours-religion-priere-ablutions' },
     { id: 'islam', label: '2. Islam (Résumé)', docId: 'cours-religion-islam-resume' },
-    { id: 'arabe', label: '3. Cours Arabe A1', docId: 'cours-arabe-a1' },
+    { id: 'examen', label: 'Examen Islam (Ados)', docId: 'examen-islam-ados' },
+    { id: 'arabe', label: '3. Arabe A1 Basique', docId: 'cours-arabe-a1' },
+    { id: 'arabe-ados', label: '3b. Arabe Complet (Ados)', docId: 'cours-arabe-ados-complet' },
     { id: 'alphabet', label: '4. Alphabet', docId: 'alphabet-arabe' },
   ];
 
