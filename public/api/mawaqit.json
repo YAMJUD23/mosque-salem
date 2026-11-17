@@ -1,21 +1,21 @@
 {
   "success": true,
   "source": "live-mawaqit",
-  "updatedAt": "2026-11-07T08:58:39.237Z",
+  "updatedAt": "2026-11-17T01:15:19.623Z",
   "times": {
-    "fajr": "06:18",
-    "shuruk": "07:37",
-    "dhuhr": "12:39",
-    "asr": "15:17",
-    "maghrib": "17:41",
+    "fajr": "06:30",
+    "shuruk": "07:50",
+    "dhuhr": "12:40",
+    "asr": "15:09",
+    "maghrib": "17:31",
     "isha": "19:20"
   },
   "iqama": {
-    "fajr": "06:28",
+    "fajr": "06:40",
     "shuruk": "-",
-    "dhuhr": "12:49",
-    "asr": "15:27",
-    "maghrib": "17:46",
+    "dhuhr": "12:50",
+    "asr": "15:19",
+    "maghrib": "17:36",
     "isha": "19:30"
   },
   "jumua": "13:00",

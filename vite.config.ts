@@ -166,10 +166,12 @@ function mosquesDataApiPlugin(): Plugin {
       });
 
       // 2. CotizUp Live Campaign Automatic Sync
-      server.middlewares.use('/api/cotizup', async (_req, res) => {
+      server.middlewares.use('/api/cotizup', async (req, res) => {
         const now = Date.now();
-        if (cachedCotizupData && now - lastCotizupCacheTime < COTIZUP_CACHE_TTL_MS) {
+        const forceRefresh = req.url?.includes('refresh=1');
+        if (!forceRefresh && cachedCotizupData && now - lastCotizupCacheTime < 10000) {
           res.setHeader('Content-Type', 'application/json');
+          res.setHeader('Cache-Control', 'no-store');
           res.end(JSON.stringify(cachedCotizupData));
           return;
         }
@@ -180,38 +182,56 @@ function mosquesDataApiPlugin(): Plugin {
             headers: {
               'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
               'Accept': 'text/html,application/xhtml+xml',
+              'Cache-Control': 'no-cache',
             },
           });
           const html = await response.text();
 
-          const amountMatch = html.match(/data-current-amount="([0-9.]+)"/) || html.match(/data-to="([0-9.]+)"/);
-          const donorsMatch = html.match(/data-total-donors="([0-9]+)"/) || html.match(/Donateurs\s*\((\d+)\)/i) || html.match(/(\d+)\s*participants/i);
+          const amountMatch =
+            html.match(/data-current-amount="([0-9.]+)"/i) ||
+            html.match(/class="count-anim"\s+data-to="([0-9.]+)"/i) ||
+            html.match(/data-to="([0-9.]+)"/i);
+          const donorsMatch =
+            html.match(/icon-users-profiles-01-thin[^>]*><\/i>\s*<span>\s*([0-9]+)\s*<\/span>/i) ||
+            html.match(/data-total-donors="([0-9]+)"/i) ||
+            html.match(/Donateurs\s*\((\d+)\)/i) ||
+            html.match(/(\d+)\s*participants/i);
 
-          const currentAmount = amountMatch ? parseFloat(amountMatch[1]) : 1442;
-          const donorsCount = donorsMatch ? parseInt(donorsMatch[1], 10) : 30;
+          const currentAmount = amountMatch ? parseFloat(amountMatch[1]) : (cachedCotizupData?.currentAmount || 1452);
+          const donorsCount = donorsMatch ? parseInt(donorsMatch[1], 10) : (cachedCotizupData?.donorsCount || 31);
 
           cachedCotizupData = {
             success: true,
             source: 'live-cotizup',
-            currentAmount: currentAmount || 1442,
+            currentAmount: currentAmount || 1452,
             targetAmount: 50000,
-            donorsCount: donorsCount || 30,
+            donorsCount: donorsCount || 31,
             updatedAt: new Date().toISOString(),
           };
           lastCotizupCacheTime = now;
 
+          try {
+            const publicApiFile = path.resolve(__dirname, 'public/api/cotizup.json');
+            fs.mkdirSync(path.dirname(publicApiFile), { recursive: true });
+            fs.writeFileSync(publicApiFile, JSON.stringify(cachedCotizupData, null, 2), 'utf8');
+          } catch {
+            // ignore write error
+          }
+
           res.setHeader('Content-Type', 'application/json');
+          res.setHeader('Cache-Control', 'no-store');
           res.end(JSON.stringify(cachedCotizupData));
         } catch (err) {
           const fallback = {
             success: true,
             source: 'fallback-cache',
-            currentAmount: cachedCotizupData?.currentAmount || 1442,
+            currentAmount: cachedCotizupData?.currentAmount || 1452,
             targetAmount: 50000,
-            donorsCount: cachedCotizupData?.donorsCount || 30,
+            donorsCount: cachedCotizupData?.donorsCount || 31,
             updatedAt: new Date().toISOString(),
           };
           res.setHeader('Content-Type', 'application/json');
+          res.setHeader('Cache-Control', 'no-store');
           res.end(JSON.stringify(fallback));
         }
       });

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   Heart,
   ShieldCheck,
@@ -15,60 +15,178 @@ interface ParkingDonationSectionProps {
   onUpdateProject?: (newProject: ProjectCampaign) => void;
 }
 
+function parseCotizupHtml(html: string): { currentAmount?: number; donorsCount?: number } {
+  const amountMatch =
+    html.match(/data-current-amount="([0-9.]+)"/i) ||
+    html.match(/class="count-anim"\s+data-to="([0-9.]+)"/i) ||
+    html.match(/data-to="([0-9.]+)"/i);
+  const donorsMatch =
+    html.match(/icon-users-profiles-01-thin[^>]*><\/i>\s*<span>\s*([0-9]+)\s*<\/span>/i) ||
+    html.match(/data-total-donors="([0-9]+)"/i) ||
+    html.match(/Donateurs\s*\((\d+)\)/i) ||
+    html.match(/(\d+)\s*participants/i);
+
+  return {
+    currentAmount: amountMatch ? parseFloat(amountMatch[1]) : undefined,
+    donorsCount: donorsMatch ? parseInt(donorsMatch[1], 10) : undefined,
+  };
+}
+
+function parseCotizupReaderText(text: string): { currentAmount?: number; donorsCount?: number } {
+  // Format in Jina Reader markdown: "€ 1,452 on €50,000\n\n3%\n\n31\n\n"
+  const blockMatch = text.match(/€\s*([0-9,\s.]+)\s*(?:on|sur)\s*€?\s*50[,\s\u00a0]*000[\s\S]{0,60}?%\s+(\d+)/i);
+  if (blockMatch) {
+    const rawAmt = blockMatch[1].replace(/[,\s\u00a0]/g, '');
+    const amt = parseFloat(rawAmt);
+    const don = parseInt(blockMatch[2], 10);
+    return {
+      currentAmount: !Number.isNaN(amt) ? amt : undefined,
+      donorsCount: !Number.isNaN(don) ? don : undefined,
+    };
+  }
+  return {};
+}
+
 export const ParkingDonationSection: React.FC<ParkingDonationSectionProps> = ({
   project,
   onUpdateProject,
 }) => {
   const [selectedPreset, setSelectedPreset] = useState<number | null>(50);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [syncStatus, setSyncStatus] = useState<string>('Synchro automatique active');
+  const [syncStatus, setSyncStatus] = useState<string>('Synchro temps réel CotizUp active');
   const [syncSuccessToast, setSyncSuccessToast] = useState(false);
 
-  // Auto-sync function with CotizUp live endpoint
-  const syncWithCotizup = async (isManual = false) => {
+  const projectRef = useRef<ProjectCampaign>(project);
+  useEffect(() => {
+    projectRef.current = project;
+  }, [project]);
+
+  // Real-time sync with CotizUp (works both on local/server via /api/cotizup AND on GitHub Pages in real time)
+  const syncWithCotizup = useCallback(async (isManual = false) => {
     setIsRefreshing(true);
     try {
-      const base = import.meta.env.BASE_URL || '/';
-      const cleanBase = base.endsWith('/') ? base : `${base}/`;
-      let res = await fetch(`${cleanBase}api/cotizup.json`);
-      if (!res.ok) {
-        res = await fetch('/api/cotizup');
+      let liveAmount: number | undefined;
+      let liveDonors: number | undefined;
+      const ts = Date.now();
+
+      // 1. Try live server endpoint first (/api/cotizup)
+      try {
+        const apiRes = await fetch(`/api/cotizup?refresh=${isManual ? '1' : '0'}&t=${ts}`, {
+          cache: 'no-store',
+        });
+        const contentType = apiRes.headers.get('content-type') || '';
+        if (apiRes.ok && contentType.includes('application/json')) {
+          const data = await apiRes.json();
+          if (data?.currentAmount) liveAmount = Number(data.currentAmount);
+          if (data?.donorsCount) liveDonors = Number(data.donorsCount);
+        }
+      } catch {
+        // Ignore if running on static GitHub Pages
       }
-      if (res.ok) {
-        const data = await res.json();
-        if (data?.currentAmount !== undefined && onUpdateProject) {
-          const updated: ProjectCampaign = {
-            ...project,
-            currentAmount: Number(data.currentAmount) || project.currentAmount,
-            donorsCount: Number(data.donorsCount) || project.donorsCount,
-            targetAmount: Number(data.targetAmount) || project.targetAmount,
-          };
-          onUpdateProject(updated);
+
+      // 2. If running on static GitHub Pages (or if /api/cotizup was not available), query CotizUp directly in real-time
+      if (!liveAmount || !liveDonors) {
+        const targetUrl = projectRef.current.cotizupUrl;
+        try {
+          const jinaHtmlRes = await fetch(`https://r.jina.ai/${targetUrl}`, {
+            headers: {
+              'X-Return-Format': 'html',
+              'X-No-Cache': 'true',
+            },
+            cache: 'no-store',
+          });
+          if (jinaHtmlRes.ok) {
+            const html = await jinaHtmlRes.text();
+            const parsed = parseCotizupHtml(html);
+            if (parsed.currentAmount) liveAmount = parsed.currentAmount;
+            if (parsed.donorsCount) liveDonors = parsed.donorsCount;
+          }
+        } catch {
+          // Fallback to simple CORS request (no custom headers)
+          try {
+            const jinaJsonRes = await fetch(`https://r.jina.ai/${targetUrl}?t=${ts}`, {
+              headers: { Accept: 'application/json' },
+              cache: 'no-store',
+            });
+            if (jinaJsonRes.ok) {
+              const j = await jinaJsonRes.json();
+              const parsed = parseCotizupReaderText(j?.data?.content || '');
+              if (parsed.currentAmount) liveAmount = parsed.currentAmount;
+              if (parsed.donorsCount) liveDonors = parsed.donorsCount;
+            }
+          } catch {
+            // Ignore live proxy error
+          }
         }
-        const now = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-        setSyncStatus(`Synchronisé à ${now}`);
-        if (isManual) {
-          setSyncSuccessToast(true);
-          setTimeout(() => setSyncSuccessToast(false), 3000);
+      }
+
+      // 3. Also check static api/cotizup.json and keep the highest/most up-to-date figures
+      try {
+        const base = import.meta.env.BASE_URL || '/';
+        const cleanBase = base.endsWith('/') ? base : `${base}/`;
+        const staticRes = await fetch(`${cleanBase}api/cotizup.json?t=${ts}`, { cache: 'no-store' });
+        if (staticRes.ok) {
+          const staticData = await staticRes.json();
+          const stAmount = Number(staticData?.currentAmount) || 0;
+          const stDonors = Number(staticData?.donorsCount) || 0;
+          if (!liveAmount || stAmount > liveAmount) liveAmount = stAmount;
+          if (!liveDonors || stDonors > liveDonors) liveDonors = stDonors;
         }
+      } catch {
+        // Ignore static fallback error
+      }
+
+      if ((liveAmount || liveDonors) && onUpdateProject) {
+        const currentProj = projectRef.current;
+        const nextAmount = liveAmount && liveAmount > 0 ? liveAmount : currentProj.currentAmount;
+        const nextDonors = liveDonors && liveDonors > 0 ? liveDonors : currentProj.donorsCount;
+
+        if (nextAmount !== currentProj.currentAmount || nextDonors !== currentProj.donorsCount) {
+          onUpdateProject({
+            ...currentProj,
+            currentAmount: nextAmount,
+            donorsCount: nextDonors,
+          });
+        }
+      }
+
+      const now = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      setSyncStatus(`Synchronisé en direct avec CotizUp à ${now}`);
+      if (isManual) {
+        setSyncSuccessToast(true);
+        setTimeout(() => setSyncSuccessToast(false), 3000);
       }
     } catch {
-      setSyncStatus('Synchronisé');
+      setSyncStatus('Synchronisé avec CotizUp');
     } finally {
       setIsRefreshing(false);
     }
-  };
+  }, [onUpdateProject]);
 
-  // Auto-sync on component mount and every 60 seconds
+  // Auto-sync on mount, every 20 seconds, and immediately when returning from the CotizUp tab
   useEffect(() => {
     syncWithCotizup(false);
     const interval = setInterval(() => {
       syncWithCotizup(false);
-    }, 60000);
-    return () => clearInterval(interval);
-  }, []);
+    }, 20000);
 
-  // Exact percentage calculation based on real amounts (1 437 € / 50 000 €)
+    const handleFocusOrVisible = () => {
+      if (document.visibilityState === 'visible') {
+        syncWithCotizup(false);
+      }
+    };
+
+    window.addEventListener('focus', handleFocusOrVisible);
+    document.addEventListener('visibilitychange', handleFocusOrVisible);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('focus', handleFocusOrVisible);
+      document.removeEventListener('visibilitychange', handleFocusOrVisible);
+    };
+  }, [syncWithCotizup]);
+
+  // Exact percentage calculation based on real amounts (1 452 € / 50 000 €)
   const percentage = Math.max(
     1,
     Math.round((project.currentAmount / project.targetAmount) * 100 * 10) / 10

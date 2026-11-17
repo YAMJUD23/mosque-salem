@@ -86,8 +86,8 @@ export const INITIAL_PROJECT: ProjectCampaign = {
   title: 'Grand Projet : Financement du Parking de la Mosquée SALEM',
   subtitle: 'Aménagement d’un stationnement sécurisé pour les familles et respect de notre voisinage.',
   targetAmount: 50000,
-  currentAmount: 1442,
-  donorsCount: 30,
+  currentAmount: 1452,
+  donorsCount: 31,
   cotizupUrl: 'https://www.cotizup.com/@association-salem-1/grand-projet-financement-du-parking-de-la-mosquee-salem',
   cotizupGeneralUrl: 'https://www.cotizup.com/@association-salem-1/grand-projet-financement-du-parking-de-la-mosquee-salem',
   phases: [

@@ -63,8 +63,8 @@ async function syncLiveData() {
   console.log('🔄 Synchronisation des données en direct (CotizUp & Mawaqit)...');
 
   // 1. Sync CotizUp Live Campaign
-  let currentAmount = 1442;
-  let donorsCount = 30;
+  let currentAmount = 1452;
+  let donorsCount = 31;
   const targetAmount = 50000;
 
   try {
@@ -73,13 +73,21 @@ async function syncLiveData() {
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
         'Accept': 'text/html,application/xhtml+xml',
+        'Cache-Control': 'no-cache',
       },
     });
 
     if (res.ok) {
       const html = await res.text();
-      const amountMatch = html.match(/data-current-amount="([0-9.]+)"/) || html.match(/data-to="([0-9.]+)"/);
-      const donorsMatch = html.match(/data-total-donors="([0-9]+)"/) || html.match(/Donateurs\s*\((\d+)\)/i);
+      const amountMatch =
+        html.match(/data-current-amount="([0-9.]+)"/i) ||
+        html.match(/class="count-anim"\s+data-to="([0-9.]+)"/i) ||
+        html.match(/data-to="([0-9.]+)"/i);
+      const donorsMatch =
+        html.match(/icon-users-profiles-01-thin[^>]*><\/i>\s*<span>\s*([0-9]+)\s*<\/span>/i) ||
+        html.match(/data-total-donors="([0-9]+)"/i) ||
+        html.match(/Donateurs\s*\((\d+)\)/i) ||
+        html.match(/(\d+)\s*participants/i);
 
       if (amountMatch) {
         currentAmount = parseFloat(amountMatch[1]);

@@ -1,6 +1,6 @@
 import React from 'react';
 import { ArrowRight, BookOpen, Users, HeartHandshake, ShieldCheck, Accessibility, Car } from 'lucide-react';
-import mosqueeStandardHero from '../assets/images/mosquee-standard-hero.jpg';
+import mosqueeExterieurAccueil from '../assets/images/mosquee-salem-exterieur-accueil.png';
 
 export const MissionSection: React.FC = () => {
   const stats = [
@@ -52,12 +52,12 @@ export const MissionSection: React.FC = () => {
         {/* 2-Column Split: Mosque Real Photo on Left + Green Card with Stats on Right */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch mb-12">
           
-          {/* Left: Clean Mosque Architecture Image */}
+          {/* Left: Real Mosque Exterior Welcome Image */}
           <div className="lg:col-span-5 rounded-2xl sm:rounded-3xl overflow-hidden shadow-md border border-stone-200/80 bg-stone-100 min-h-[340px] lg:min-h-full relative group">
             <img
-              src={mosqueeStandardHero}
-              alt="Espace et architecture de sérénité"
-              className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-500"
+              src={mosqueeExterieurAccueil}
+              alt="Vue extérieure d'accueil de la Mosquée SALEM de Saint-Sulpice-la-Pointe"
+              className="w-full h-full object-cover object-center group-hover:scale-102 transition-transform duration-500"
               loading="lazy"
             />
             <div className="absolute bottom-3 left-3 bg-black/70 backdrop-blur-xs text-white text-[11px] font-medium px-3 py-1 rounded-lg">
